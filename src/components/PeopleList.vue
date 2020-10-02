@@ -3,6 +3,14 @@
 
     <input type="text" v-model="inputSearch" autofocus>
 
+    <br>
+
+    <button v-on:click="SortName">По имени</button>
+    <button v-on:click="SortDate">По дате</button>
+    <button v-on:click="SortMass">По весу</button>
+    
+ 
+
     <div class="item_pople" v-for="(people, index) in filteredItems" v-bind:key="index">
 
       {{people.name}}
@@ -25,39 +33,49 @@ export default {
   data() {
     return {
       peoples: [],
-      inputSearch: ''
+      inputSearch: '',
+      search: { filter: null, text: "" },
     }
   },
   computed: {
-    // filteredItems() {
-    //   return this.peoples.filter(people => {
-    //      return people.type.toLowerCase().indexOf(this.inputSearch.toLowerCase()) > -1 || people.name.toLowerCase().indexOf(this.inputSearch.toLowerCase()) > -1
-    //   })
-    // }
-    // filteredItems()  {
-    //   let inputSearch = this.inputSearch.trim();
-      
-    //   if(inputSearch) {
-    //     inputSearch = inputSearch.toLowerCase();
-    //     return this.peoples.filter(people => people.toLowerCase().includes(inputSearch))
-    //   }
-
-    //   return this.peoples
-    // }
     filteredItems(){
       return this.peoples.filter(people => {
         return people.name.toLowerCase().includes(this.inputSearch.toLowerCase())
-      })
+      });
     }
     
   },
   methods: {
     GetPoples() {
       axios.get(`${baseUrl}/api/people/`).then(response => (this.peoples = response.data.results));
+    },
+    SortName() {
+      function compare(a, b) {
+        if (a.name < b.name)
+          return -1;
+        if (a.name > b.name)
+          return 1;
+        return 0;
+      }
+      return this.peoples.sort(compare);
+    },
+    SortDate(){
+
+    },
+    SortMass(){
+      function compare(a, b) {
+        if (a.mass < b.mass)
+          return -1;
+        if (a.mass > b.mass)
+          return 1;
+        return 0;
+      }
+      return this.peoples.sort(compare);
     }
   },
   mounted(){
     this.GetPoples();
+    this.SortName();
   }
 }
 </script>
